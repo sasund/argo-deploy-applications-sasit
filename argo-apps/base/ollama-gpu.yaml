@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sasit-ollama-gpu-rollout
+  namespace: argocd
+  annotations:
+    # Improve performance by only syncing the paths that are needed https://argo-cd.readthedocs.io/en/latest/operator-manual/high_availability/#manifest-paths-annotation
+    argocd.argoproj.io/manifest-generate-paths: .
+
+  # Add this finalizer ONLY if you want these to cascade delete (A cascade delete, deletes both the app and its resources, rather than only the app.)
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  
+spec:
+  project: default
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+
+    automated:
+      prune: true
+      selfHeal: true
+
+  sources:
+    - repoURL: ${ARGOCD_ENV_GITHUB_REPO}/argo-deploy-applications-sasit.git
+      targetRevision: main
+      path: applications/overlays/local/ollama-gpu
+      # Note: envsubst envs are injected through parent app via helm chart in tf.
+      plugin:
+        name: envsubst
+        env:
+          - name: ENV
+            value: "${ARGOCD_ENV_ENV}"
+          - name: DNS_ENV
+            value: "${ARGOCD_ENV_DNS_ENV}"
+          - name: DNS_DOMAIN
+            value: "${ARGOCD_ENV_DNS_DOMAIN}"
+
+
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sasit

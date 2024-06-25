@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra-argo-workflows-helm
+  namespace: argocd
+
+  # Add this finalizer ONLY if you want these to cascade delete (A cascade delete, deletes both the app and its resources, rather than only the app.)
+  # finalizers:
+  #   - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+
+    automated:
+      prune: true
+      selfHeal: true
+      
+  source:
+    chart: ollama
+    repoURL: https://otwld.github.io/ollama-helm/
+    targetRevision: 0.41.11
+
+    # https://github.com/otwld/ollama-helm
+    helm:
+      valuesObject:
+        fullnameOverride: ollama-gpu
+
+        crdAnnotations:
+          argocd.argoproj.io/sync-wave: "-1"
+        
+
+        ## Ollama ##
+        ollama:
+          gpu:
+            enabled: true
+            type: 'nvidia'
+            number: 1
+          models:
+            - llama3
+        ingress:
+          enabled: true
+          hosts:
+            - host: ollama.sasit.no
+              paths:
+                - path: /
+                pathType: Prefix
+
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: sasit
