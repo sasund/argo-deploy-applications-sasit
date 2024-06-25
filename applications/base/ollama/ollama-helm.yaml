@@ -21,18 +21,18 @@ spec:
       
   source:
     chart: ollama
-    repoURL: https://otwld.github.io/ollama-helm/
+    repoURL: https://otwld.github.io/ollama-helm
     targetRevision: 0.37.0
 
     # https://github.com/otwld/ollama-helm
     helm:
-      releaseName: ollama
-        
+      valuesObject:
+        fullnameOverride: ollama  
 
         ## Ollama ##
-        #ollama:
-        #  models:
-        #    - llama2
+        ollama:
+          models:
+            - llama3
 
   destination:
     server: "https://kubernetes.default.svc"
