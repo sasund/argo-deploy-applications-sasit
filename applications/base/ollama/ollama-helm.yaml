@@ -20,7 +20,7 @@ spec:
       selfHeal: true
       
   source:
-    chart: ollama-helm/ollama
+    chart: ollama
     repoURL: https://otwld.github.io/ollama-helm
     targetRevision: 0.37.0
 
