@@ -22,15 +22,11 @@ spec:
   source:
     chart: ollama
     repoURL: https://otwld.github.io/ollama-helm/
-    targetRevision: HEAD
+    targetRevision: 0.37.0
 
     # https://github.com/otwld/ollama-helm
     helm:
-      valuesObject:
-        fullnameOverride: ollama
-
-        crdAnnotations:
-          argocd.argoproj.io/sync-wave: "-1"
+      releaseName: ollama
         
 
         ## Ollama ##
