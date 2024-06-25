@@ -37,13 +37,13 @@ spec:
         ollama:
           models:
             - llama3
-        ingress:
-          enabled: true
-          hosts:
-            - host: ollama.sasit.no
-              paths:
-                - path: /
-                pathType: Prefix
+        #ingress:
+        #  enabled: true
+        #  hosts:
+        #    - host: ollama.sasit.no
+        #      paths:
+        #        - path: /
+        #        pathType: Prefix
 
   destination:
     server: "https://kubernetes.default.svc"
